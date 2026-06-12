@@ -6,42 +6,42 @@
     <select id="findByCondition" resultType="com.steam.entity.Game">
         SELECT DISTINCT g.*
         FROM games g
-        <if test="categoryId != null">
+        <if test="condition.categoryId != null">
             INNER JOIN game_categories gc ON g.id = gc.game_id
         </if>
         WHERE g.status = 1
-        <if test="keyword != null and keyword != ''">
-            AND (g.title LIKE CONCAT('%', #{keyword}, '%')
-                OR g.description LIKE CONCAT('%', #{keyword}, '%')
-                OR g.developer LIKE CONCAT('%', #{keyword}, '%')
-                OR g.publisher LIKE CONCAT('%', #{keyword}, '%'))
+        <if test="condition.keyword != null and condition.keyword != ''">
+            AND (g.title LIKE CONCAT('%', #{condition.keyword}, '%')
+                OR g.description LIKE CONCAT('%', #{condition.keyword}, '%')
+                OR g.developer LIKE CONCAT('%', #{condition.keyword}, '%')
+                OR g.publisher LIKE CONCAT('%', #{condition.keyword}, '%'))
         </if>
-        <if test="categoryId != null">
-            AND gc.category_id = #{categoryId}
+        <if test="condition.categoryId != null">
+            AND gc.category_id = #{condition.categoryId}
         </if>
-        <if test="minPrice != null">
-            AND COALESCE(g.discount_price, g.original_price) >= #{minPrice}
+        <if test="condition.minPrice != null">
+            AND COALESCE(g.discount_price, g.original_price) >= #{condition.minPrice}
         </if>
-        <if test="maxPrice != null">
-            AND COALESCE(g.discount_price, g.original_price) &lt;= #{maxPrice}
+        <if test="condition.maxPrice != null">
+            AND COALESCE(g.discount_price, g.original_price) &lt;= #{condition.maxPrice}
         </if>
-        <if test="onSale != null and onSale == true">
+        <if test="condition.onSale != null and condition.onSale == true">
             AND g.discount_percent > 0
         </if>
-        <if test="featured != null and featured == true">
+        <if test="condition.featured != null and condition.featured == true">
             AND g.is_featured = 1
         </if>
         <choose>
-            <when test="sortBy == 'price'">
+            <when test="condition.sortBy == 'price'">
                 ORDER BY COALESCE(g.discount_price, g.original_price)
             </when>
-            <when test="sortBy == 'rating'">
+            <when test="condition.sortBy == 'rating'">
                 ORDER BY g.rating
             </when>
-            <when test="sortBy == 'sales'">
+            <when test="condition.sortBy == 'sales'">
                 ORDER BY g.sales_count
             </when>
-            <when test="sortBy == 'releaseDate'">
+            <when test="condition.sortBy == 'releaseDate'">
                 ORDER BY g.release_date
             </when>
             <otherwise>
@@ -49,43 +49,43 @@
             </otherwise>
         </choose>
         <choose>
-            <when test="sortOrder == 'asc'">
+            <when test="condition.sortOrder == 'asc'">
                 ASC
             </when>
             <otherwise>
                 DESC
             </otherwise>
         </choose>
-        LIMIT #{offset}, #{limit}
+        LIMIT #{condition.offset}, #{condition.limit}
     </select>
 
     <!-- 统计符合条件的游戏总数 -->
     <select id="countByCondition" resultType="java.lang.Long">
         SELECT COUNT(DISTINCT g.id)
         FROM games g
-        <if test="categoryId != null">
+        <if test="condition.categoryId != null">
             INNER JOIN game_categories gc ON g.id = gc.game_id
         </if>
         WHERE g.status = 1
-        <if test="keyword != null and keyword != ''">
-            AND (g.title LIKE CONCAT('%', #{keyword}, '%')
-                OR g.description LIKE CONCAT('%', #{keyword}, '%')
-                OR g.developer LIKE CONCAT('%', #{keyword}, '%')
-                OR g.publisher LIKE CONCAT('%', #{keyword}, '%'))
+        <if test="condition.keyword != null and condition.keyword != ''">
+            AND (g.title LIKE CONCAT('%', #{condition.keyword}, '%')
+                OR g.description LIKE CONCAT('%', #{condition.keyword}, '%')
+                OR g.developer LIKE CONCAT('%', #{condition.keyword}, '%')
+                OR g.publisher LIKE CONCAT('%', #{condition.keyword}, '%'))
         </if>
-        <if test="categoryId != null">
-            AND gc.category_id = #{categoryId}
+        <if test="condition.categoryId != null">
+            AND gc.category_id = #{condition.categoryId}
         </if>
-        <if test="minPrice != null">
-            AND COALESCE(g.discount_price, g.original_price) >= #{minPrice}
+        <if test="condition.minPrice != null">
+            AND COALESCE(g.discount_price, g.original_price) >= #{condition.minPrice}
         </if>
-        <if test="maxPrice != null">
-            AND COALESCE(g.discount_price, g.original_price) &lt;= #{maxPrice}
+        <if test="condition.maxPrice != null">
+            AND COALESCE(g.discount_price, g.original_price) &lt;= #{condition.maxPrice}
         </if>
-        <if test="onSale != null and onSale == true">
+        <if test="condition.onSale != null and condition.onSale == true">
             AND g.discount_percent > 0
         </if>
-        <if test="featured != null and featured == true">
+        <if test="condition.featured != null and condition.featured == true">
             AND g.is_featured = 1
         </if>
     </select>

@@ -1,16 +1,17 @@
 package com.steam.service;
 
+import com.steam.dto.GameCondition;
 import com.steam.dto.GameQueryDTO;
 import com.steam.dto.PageResult;
 import com.steam.entity.Category;
 import com.steam.entity.Game;
+import com.steam.enums.PriceRange;
 import com.steam.mapper.CategoryMapper;
 import com.steam.mapper.GameMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -67,56 +68,27 @@ public class GameService {
      * 条件查询游戏
      */
     public PageResult<Game> searchGames(GameQueryDTO query) {
-        // 解析价格范围
-        BigDecimal minPrice = null;
-        BigDecimal maxPrice = null;
-        if (query.getPriceRange() != null) {
-            switch (query.getPriceRange()) {
-                case "free":
-                    minPrice = BigDecimal.ZERO;
-                    maxPrice = BigDecimal.ZERO;
-                    break;
-                case "under50":
-                    maxPrice = new BigDecimal("50");
-                    break;
-                case "50to100":
-                    minPrice = new BigDecimal("50");
-                    maxPrice = new BigDecimal("100");
-                    break;
-                case "100to200":
-                    minPrice = new BigDecimal("100");
-                    maxPrice = new BigDecimal("200");
-                    break;
-                case "over200":
-                    minPrice = new BigDecimal("200");
-                    break;
-            }
+        PriceRange priceRange = PriceRange.fromCode(query.getPriceRange());
+
+        GameCondition condition = new GameCondition();
+        condition.setKeyword(query.getKeyword());
+        condition.setCategoryId(query.getCategoryId());
+        if (priceRange != null) {
+            condition.setMinPrice(priceRange.getMinPrice());
+            condition.setMaxPrice(priceRange.getMaxPrice());
         }
-        
+        condition.setOnSale(query.getOnSale());
+        condition.setFeatured(query.getFeatured());
+        condition.setSortBy(query.getSortBy());
+        condition.setSortOrder(query.getSortOrder());
+
         int offset = (query.getPage() - 1) * query.getSize();
-        
-        List<Game> games = gameMapper.findByCondition(
-                query.getKeyword(),
-                query.getCategoryId(),
-                minPrice,
-                maxPrice,
-                query.getOnSale(),
-                query.getFeatured(),
-                query.getSortBy(),
-                query.getSortOrder(),
-                offset,
-                query.getSize()
-        );
-        
-        Long total = gameMapper.countByCondition(
-                query.getKeyword(),
-                query.getCategoryId(),
-                minPrice,
-                maxPrice,
-                query.getOnSale(),
-                query.getFeatured()
-        );
-        
+        condition.setOffset(offset);
+        condition.setLimit(query.getSize());
+
+        List<Game> games = gameMapper.findByCondition(condition);
+        Long total = gameMapper.countByCondition(condition);
+
         return PageResult.of(games, total, query.getPage(), query.getSize());
     }
     

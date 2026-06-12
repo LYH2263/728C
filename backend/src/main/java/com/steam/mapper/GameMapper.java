@@ -1,5 +1,6 @@
 package com.steam.mapper;
 
+import com.steam.dto.GameCondition;
 import com.steam.entity.Game;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
@@ -29,23 +30,9 @@ public interface GameMapper {
     List<Game> findNewReleases(Integer limit);
     
     // 复杂查询使用XML配置
-    List<Game> findByCondition(@Param("keyword") String keyword,
-                               @Param("categoryId") Long categoryId,
-                               @Param("minPrice") java.math.BigDecimal minPrice,
-                               @Param("maxPrice") java.math.BigDecimal maxPrice,
-                               @Param("onSale") Boolean onSale,
-                               @Param("featured") Boolean featured,
-                               @Param("sortBy") String sortBy,
-                               @Param("sortOrder") String sortOrder,
-                               @Param("offset") Integer offset,
-                               @Param("limit") Integer limit);
+    List<Game> findByCondition(@Param("condition") GameCondition condition);
     
-    Long countByCondition(@Param("keyword") String keyword,
-                          @Param("categoryId") Long categoryId,
-                          @Param("minPrice") java.math.BigDecimal minPrice,
-                          @Param("maxPrice") java.math.BigDecimal maxPrice,
-                          @Param("onSale") Boolean onSale,
-                          @Param("featured") Boolean featured);
+    Long countByCondition(@Param("condition") GameCondition condition);
     
     @Update("UPDATE games SET stock = stock - 1, sales_count = sales_count + 1 WHERE id = #{id} AND stock > 0")
     int decreaseStock(Long id);
