@@ -37,6 +37,21 @@ public interface GameMapper {
     @Update("UPDATE games SET stock = stock - 1, sales_count = sales_count + 1 WHERE id = #{id} AND stock > 0")
     int decreaseStock(Long id);
     
+    @Insert("INSERT INTO games (title, description, detail_description, cover_image, original_price, " +
+            "discount_price, discount_percent, developer, publisher, release_date, stock, sales_count, " +
+            "rating, rating_count, status, is_featured) " +
+            "VALUES (#{title}, #{description}, #{detailDescription}, #{coverImage}, #{originalPrice}, " +
+            "#{discountPrice}, #{discountPercent}, #{developer}, #{publisher}, #{releaseDate}, #{stock}, " +
+            "#{salesCount}, #{rating}, #{ratingCount}, #{status}, #{isFeatured})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(Game game);
+
+    @Update("UPDATE games SET discount_price = #{discountPrice}, discount_percent = #{discountPercent}, " +
+            "updated_at = CURRENT_TIMESTAMP WHERE id = #{id}")
+    int updateDiscount(@Param("id") Long id,
+                       @Param("discountPrice") java.math.BigDecimal discountPrice,
+                       @Param("discountPercent") Integer discountPercent);
+
     @Update("UPDATE games SET rating = #{rating}, rating_count = #{ratingCount} WHERE id = #{id}")
     int updateRating(@Param("id") Long id, @Param("rating") java.math.BigDecimal rating, @Param("ratingCount") Integer ratingCount);
 }
