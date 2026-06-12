@@ -1,0 +1,232 @@
+// Steam 风格全局样式
+:root {
+  // 主色调
+  --steam-dark: #1b2838;
+  --steam-darker: #171a21;
+  --steam-blue: #2a475e;
+  --steam-light-blue: #66c0f4;
+  --steam-green: #a4d007;
+  --steam-hover: #3d6c8e;
+  
+  // 文字颜色
+  --text-primary: #c7d5e0;
+  --text-secondary: #8f98a0;
+  --text-white: #ffffff;
+  --text-light: #b8b6b4;
+  
+  // 背景色
+  --bg-primary: #1b2838;
+  --bg-secondary: #2a475e;
+  --bg-card: rgba(0, 0, 0, 0.2);
+  --bg-hover: rgba(255, 255, 255, 0.1);
+  
+  // 边框
+  --border-color: rgba(255, 255, 255, 0.1);
+  
+  // 圆角
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  // 阴影
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--steam-dark);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--steam-light-blue);
+  text-decoration: none;
+  transition: color 0.3s;
+  
+  &:hover {
+    color: var(--text-white);
+  }
+}
+
+// Element Plus 主题覆盖
+.el-button--primary {
+  background: linear-gradient(90deg, #47bfff 0%, #1a9fff 100%);
+  border: none;
+  
+  &:hover {
+    background: linear-gradient(90deg, #66c0f4 0%, #2a9fff 100%);
+  }
+}
+
+.el-button--success {
+  background: linear-gradient(90deg, #a4d007 0%, #8bc700 100%);
+  border: none;
+  
+  &:hover {
+    background: linear-gradient(90deg, #b4e017 0%, #9bd700 100%);
+  }
+}
+
+.el-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  
+  .el-card__header {
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.el-dialog {
+  background: var(--steam-dark);
+  border-radius: var(--radius-lg);
+  
+  .el-dialog__header {
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.el-input__wrapper {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  
+  &:hover, &.is-focus {
+    border-color: var(--steam-light-blue);
+  }
+}
+
+.el-input__inner {
+  color: var(--text-primary);
+}
+
+.el-select__wrapper {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.el-tag {
+  background: rgba(102, 192, 244, 0.2);
+  border: none;
+  color: var(--steam-light-blue);
+}
+
+.el-pagination {
+  --el-pagination-bg-color: transparent;
+  --el-pagination-text-color: var(--text-primary);
+  --el-pagination-button-disabled-color: var(--text-secondary);
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--steam-darker);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--steam-blue);
+  border-radius: 4px;
+  
+  &:hover {
+    background: var(--steam-hover);
+  }
+}
+
+// 通用类
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-white);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: var(--steam-light-blue);
+    border-radius: 2px;
+  }
+}
+
+.price {
+  font-weight: 600;
+  
+  &.free {
+    color: var(--steam-green);
+  }
+  
+  &.discount {
+    color: var(--steam-green);
+  }
+  
+  &.original {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    font-size: 0.9em;
+  }
+}
+
+.discount-tag {
+  background: var(--steam-green);
+  color: var(--steam-darker);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+// 骨架屏
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, rgba(255, 255, 255, 0.1) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// 响应式断点
+@media (max-width: 1200px) {
+  .container {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 12px;
+  }
+  
+  .section-title {
+    font-size: 18px;
+  }
+}

@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+
+# Build
+dist/
+build/
+target/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+*.tar
+
+# Project docs / conversation
+题目.md
+代码生成.md
+迭代.md
+对话/
