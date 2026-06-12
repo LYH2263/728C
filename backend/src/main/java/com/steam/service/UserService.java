@@ -4,6 +4,8 @@ import com.steam.dto.LoginDTO;
 import com.steam.dto.LoginResponse;
 import com.steam.dto.RegisterDTO;
 import com.steam.entity.User;
+import com.steam.enums.ErrorCode;
+import com.steam.exception.BusinessException;
 import com.steam.mapper.UserMapper;
 import com.steam.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
-/**
- * 用户服务
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,19 +25,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     
-    /**
-     * 用户登录
-     */
     public LoginResponse login(LoginDTO dto) {
         User user = userMapper.findByUsername(dto.getUsername());
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw BusinessException.of(ErrorCode.USER_NOT_FOUND);
         }
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new RuntimeException("密码错误");
+            throw BusinessException.of(ErrorCode.WRONG_PASSWORD);
         }
         if (user.getStatus() == 0) {
-            throw new RuntimeException("账号已被禁用");
+            throw BusinessException.of(ErrorCode.ACCOUNT_DISABLED);
         }
         
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
@@ -51,18 +47,13 @@ public class UserService {
         return response;
     }
     
-    /**
-     * 用户注册
-     */
     @Transactional
     public LoginResponse register(RegisterDTO dto) {
-        // 检查用户名是否已存在
         if (userMapper.findByUsername(dto.getUsername()) != null) {
-            throw new RuntimeException("用户名已存在");
+            throw BusinessException.of(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
-        // 检查邮箱是否已存在
         if (dto.getEmail() != null && userMapper.findByEmail(dto.getEmail()) != null) {
-            throw new RuntimeException("邮箱已被注册");
+            throw BusinessException.of(ErrorCode.EMAIL_ALREADY_REGISTERED);
         }
         
         User user = new User();
@@ -87,36 +78,29 @@ public class UserService {
         return response;
     }
     
-    /**
-     * 获取用户信息
-     */
     public User getUserById(Long id) {
         User user = userMapper.findById(id);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw BusinessException.of(ErrorCode.USER_NOT_FOUND);
         }
-        user.setPassword(null); // 不返回密码
+        user.setPassword(null);
         return user;
     }
     
-    /**
-     * 更新用户信息
-     */
     @Transactional
     public User updateUser(Long id, User updateUser) {
         User user = userMapper.findById(id);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw BusinessException.of(ErrorCode.USER_NOT_FOUND);
         }
         
         if (updateUser.getNickname() != null) {
             user.setNickname(updateUser.getNickname());
         }
         if (updateUser.getEmail() != null) {
-            // 检查邮箱是否被其他用户使用
             User existUser = userMapper.findByEmail(updateUser.getEmail());
             if (existUser != null && !existUser.getId().equals(id)) {
-                throw new RuntimeException("邮箱已被其他用户使用");
+                throw BusinessException.of(ErrorCode.EMAIL_ALREADY_USED);
             }
             user.setEmail(updateUser.getEmail());
         }
@@ -129,18 +113,15 @@ public class UserService {
         return user;
     }
     
-    /**
-     * 更新用户余额
-     */
     @Transactional
     public void updateBalance(Long id, BigDecimal amount) {
         User user = userMapper.findById(id);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw BusinessException.of(ErrorCode.USER_NOT_FOUND);
         }
         BigDecimal newBalance = user.getBalance().add(amount);
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("余额不足");
+            throw BusinessException.of(ErrorCode.INSUFFICIENT_BALANCE_GENERIC);
         }
         userMapper.updateBalance(id, newBalance);
     }
