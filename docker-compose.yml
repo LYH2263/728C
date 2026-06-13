@@ -22,7 +22,9 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123456"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      # 首次启动需初始化数据库（InnoDB + init.sql），给足缓冲时间，期间失败不计入 retries
+      start_period: 120s
     networks:
       - steam-network
 

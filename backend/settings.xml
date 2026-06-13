@@ -10,4 +10,22 @@
             <url>https://maven.aliyun.com/repository/public</url>
         </mirror>
     </mirrors>
+
+    <profiles>
+        <profile>
+            <id>retry-settings</id>
+            <properties>
+                <!-- 网络不稳定时自动重试，避免传输中断导致构建失败 -->
+                <maven.wagon.http.retryHandler.count>5</maven.wagon.http.retryHandler.count>
+                <maven.wagon.http.retryHandler.requestSentEnabled>true</maven.wagon.http.retryHandler.requestSentEnabled>
+                <maven.wagon.httpconnectionManager.ttlSeconds>120</maven.wagon.httpconnectionManager.ttlSeconds>
+                <maven.wagon.http.pool>false</maven.wagon.http.pool>
+                <maven.wagon.rto>120000</maven.wagon.rto>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>retry-settings</activeProfile>
+    </activeProfiles>
 </settings>
